@@ -10,7 +10,7 @@ import pyautogui
 import pyperclip
 
 # Safety configuration for PyAutoGUI
-pyautogui.FAILSAFE = False
+pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 0.05
 
 # ==========================================
