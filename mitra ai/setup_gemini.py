@@ -1,5 +1,6 @@
 import sys
 import webbrowser
+from getpass import getpass
 from brain import get_api_status, save_api_key
 
 def main():
@@ -30,7 +31,7 @@ def main():
         choice = input("\nOnce you have copied your key, press 1 to enter it (or 3 to exit): ").strip()
 
     if choice == "1":
-        key = input("\nPaste your Gemini API key: ").strip()
+        key = getpass("\nPaste your Gemini API key (input hidden): ").strip()
         if not key:
             print("No key entered. Exiting setup.")
             return
