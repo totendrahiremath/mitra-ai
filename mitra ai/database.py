@@ -11,9 +11,14 @@ DB_NAME = os.path.join(BASE_DIR, "aurvyn_memory.db")
 def _redact_secrets(value: str) -> str:
     """Remove common Gemini API-key formats and key-setting commands before persistence."""
     value = str(value)
-    value = re.sub(r"AIza[0-9A-Za-z_-]{20,}", "[REDACTED_API_KEY]", value)
+    value = re.sub(r"(?i)AIza[0-9A-Za-z_-]{20,}", "[REDACTED_API_KEY]", value)
     value = re.sub(
-        r"(?i)((?:set|add|update)\s+(?:gemini\s+)?(?:api\s+)?key\s+(?:to\s+)?)[^\s,;]+",
+        r"(?i)(GEMINI_API_KEY\s*=\s*)[^\s,;]+",
+        r"\1[REDACTED]",
+        value
+    )
+    value = re.sub(
+        r"(?i)((?:set|add|update|save|enter)\s+(?:the\s+)?(?:gemini\s+)?(?:api\s+)?key\s*(?:to|as|=|:)?\s*)[^\s,;]+",
         r"\1[REDACTED]",
         value
     )
@@ -116,8 +121,9 @@ def insert_interactions_batch(interactions: list) -> int:
             else:
                 continue
 
-            u_clean = str(u).strip()
-            r_clean = str(r).strip()
+            # Imported conversations must receive the same secret filtering as new chat logs.
+            u_clean = _redact_secrets(str(u).strip())
+            r_clean = _redact_secrets(str(r).strip())
             if not u_clean or not r_clean:
                 continue
 
