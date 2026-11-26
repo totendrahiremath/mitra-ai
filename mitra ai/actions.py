@@ -243,13 +243,13 @@ def handle_action(command: str) -> str:
         if status["configured"]:
             return f"Gemini API is active with key {status['masked_key']} using model {status['model']}."
         else:
-            return "Gemini API is not configured yet. Whenever you're ready, you can say 'set gemini key' followed by your key, or click the API Key button in the app."
+            return "Gemini API is not configured yet. Please enter your key using the API Key button in the app."
 
     if any(p in cmd_clean for p in ["enable gemini api", "enable gemini", "add gemini api", "configure gemini", "setup gemini", "activate gemini", "gemini api key", "gemini key", "how to add gemini api"]):
         from brain import get_api_status
         status = get_api_status()
         if status["configured"]:
-            return f"Gemini API is already connected ({status['masked_key']}). Whenever you wish to change it, simply click the API Key button using the API Key button."
+            return f"Gemini API is already connected ({status['masked_key']}). Use the API Key button to change it."
         else:
             return "To enable the Gemini API, you can enter your API key by clicking the 'API Key' button at the top of the interface, or say 'open AI studio' to obtain a free key from Google."
 
