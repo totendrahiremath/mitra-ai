@@ -233,15 +233,9 @@ def handle_action(command: str) -> str:
         return "Please don't worry about it at all! I'm right here whenever you need me. How can I help?"
 
     # 5.1 Gemini API Key Configuration & Status
-    set_key_match = re.search(r"(?:set|add|update)\s+(?:gemini\s+)?(?:api\s+)?key\s+(?:to\s+)?([A-Za-z0-9_\-]+)", cmd)
-    if set_key_match:
-        from brain import save_api_key
-        new_key = set_key_match.group(1).strip()
-        success, message = save_api_key(new_key)
-        if success:
-            return "Gemini API key has been verified and saved successfully! Aurvyn AI is now happily connected to Gemini. How may I assist you?"
-        else:
-            return f"Failed to set Gemini API key: {message}"
+    # Never accept secrets in ordinary voice/text commands: queries are stored in memory.
+    if re.search(r"(?:set|add|update)\s+(?:gemini\s+)?(?:api\s+)?key\s+(?:to\s+)?\S+", cmd, re.IGNORECASE):
+        return "For your safety, enter the Gemini API key only through the API Key button. Do not speak or paste secrets into chat."
 
     if any(p in cmd_clean for p in ["gemini status", "check gemini", "api status", "gemini api status"]):
         from brain import get_api_status
@@ -249,13 +243,13 @@ def handle_action(command: str) -> str:
         if status["configured"]:
             return f"Gemini API is active with key {status['masked_key']} using model {status['model']}."
         else:
-            return "Gemini API is not configured yet. Whenever you're ready, you can say 'set gemini key' followed by your key, or click the API Key button in the app."
+            return "Gemini API is not configured yet. Please enter your key using the API Key button in the app."
 
     if any(p in cmd_clean for p in ["enable gemini api", "enable gemini", "add gemini api", "configure gemini", "setup gemini", "activate gemini", "gemini api key", "gemini key", "how to add gemini api"]):
         from brain import get_api_status
         status = get_api_status()
         if status["configured"]:
-            return f"Gemini API is already connected ({status['masked_key']}). Whenever you wish to change it, simply click the API Key button or say 'set gemini key' followed by your key."
+            return f"Gemini API is already connected ({status['masked_key']}). Use the API Key button to change it."
         else:
             return "To enable the Gemini API, you can enter your API key by clicking the 'API Key' button at the top of the interface, or say 'open AI studio' to obtain a free key from Google."
 

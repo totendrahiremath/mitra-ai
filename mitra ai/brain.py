@@ -2,6 +2,7 @@ import os
 import re
 import urllib.parse
 import webbrowser
+import tempfile
 from google import genai
 from google.genai import types
 
@@ -63,7 +64,7 @@ def get_api_status() -> dict:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
     model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-native-audio-latest")
     if api_key:
-        masked = f"{api_key[:4]}...{api_key[-4:]}" if len(api_key) >= 8 else "****"
+        masked = f"****...{api_key[-4:]}" if len(api_key) >= 4 else "****"
         return {
             "configured": True,
             "masked_key": masked,
@@ -76,32 +77,38 @@ def get_api_status() -> dict:
     }
 
 def save_api_key(api_key: str) -> tuple[bool, str]:
-    """Tests the provided Gemini API key and persists it to .env if valid."""
+    """Tests the provided Gemini API key and safely persists it to .env if valid."""
     global _client
     api_key = api_key.strip()
     if not api_key:
         return False, "API key cannot be empty."
+    if "\n" in api_key or "\r" in api_key:
+        return False, "API key contains invalid line breaks."
 
-    test_client = genai.Client(api_key=api_key)
-    test_model = _get_generation_model()
+    # Verify the key before changing the user's configuration.
     try:
-        test_client.models.generate_content(
-            model=test_model,
-            contents="ping",
-            config=types.GenerateContentConfig(max_output_tokens=5)
-        )
-    except Exception as e:
-        # Fallback test with gemini-3.5-flash
+        test_client = genai.Client(api_key=api_key)
+        test_model = _get_generation_model()
         try:
             test_client.models.generate_content(
-                model="gemini-3.5-flash",
+                model=test_model,
                 contents="ping",
                 config=types.GenerateContentConfig(max_output_tokens=5)
             )
-        except Exception as e2:
-            return False, f"Verification failed: {e2}"
+        except Exception:
+            # Retry with the standard content model if the configured model is unavailable.
+            try:
+                test_client.models.generate_content(
+                    model="gemini-3.5-flash",
+                    contents="ping",
+                    config=types.GenerateContentConfig(max_output_tokens=5)
+                )
+            except Exception as verification_error:
+                return False, f"Verification failed: {verification_error}"
+    except Exception as verification_error:
+        return False, f"Verification failed: {verification_error}"
 
-    # Persist to .env
+    # Read the existing configuration first. Never replace it if reading fails.
     env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
     lines = []
     key_written = False
@@ -114,17 +121,38 @@ def save_api_key(api_key: str) -> tuple[bool, str]:
                         key_written = True
                     else:
                         lines.append(line)
-        except Exception:
-            pass
+        except OSError as read_error:
+            return False, f"Key verified but could not read existing .env: {read_error}"
 
     if not key_written:
+        if lines and not lines[-1].endswith(("\n", "\r")):
+            lines[-1] += "\n"
         lines.append(f"GEMINI_API_KEY={api_key}\n")
 
+    # Write to a temporary file in the same directory, then replace .env atomically.
+    temp_path = None
     try:
-        with open(env_path, "w", encoding="utf-8") as f:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            newline="",
+            dir=os.path.dirname(env_path),
+            prefix=".env.",
+            suffix=".tmp",
+            delete=False
+        ) as f:
+            temp_path = f.name
             f.writelines(lines)
-    except Exception as e:
-        return False, f"Key verified but failed to write .env: {e}"
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp_path, env_path)
+    except OSError as write_error:
+        if temp_path and os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+        return False, f"Key verified but failed to safely write .env: {write_error}"
 
     os.environ["GEMINI_API_KEY"] = api_key
     _client = test_client

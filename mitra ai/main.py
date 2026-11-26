@@ -1,6 +1,7 @@
 import sys
 import time
 import argparse
+import getpass
 import threading
 import winsound
 from database import init_db, log_interaction
@@ -168,7 +169,7 @@ def run_text_mode():
     if api_st["configured"]:
         print(f"[Gemini API]: Connected ({api_st['masked_key']}) | Model: {api_st['model']}\n")
     else:
-        print("[Gemini API]: Not configured yet. (Type 'add gemini api' or run 'python main.py --set-key <KEY>')\n")
+        print("[Gemini API]: Not configured yet. (use the API Key button or run 'python main.py --set-key' for a hidden prompt)\n")
     speak("Aurvyn AI is initialized and ready in interactive mode. It's a pleasure to assist you! How can I help you today?")
 
     while True:
@@ -321,15 +322,16 @@ def main():
     parser.add_argument("--live", action="store_true", help="Run in continuous real-time bidirectional live voice streaming mode (CLI)")
     parser.add_argument("--text", "-t", action="store_true", help="Run in interactive text mode instead of voice")
     parser.add_argument("--test", action="store_true", help="Run automated diagnostic self-test and exit")
-    parser.add_argument("--set-key", type=str, help="Configure and verify Gemini API key, save to .env, and exit")
+    parser.add_argument("--set-key", action="store_true", help="Prompt securely for a Gemini API key, verify it, save to .env, and exit")
     parser.add_argument("--import", "-i", dest="import_path", type=str, help="Import Gemini conversations from file/folder into memory and exit")
     args = parser.parse_args()
 
-    # Handle immediate key setup if specified
+    # Prompt without echoing the secret into terminal history or process arguments.
     if args.set_key:
         from brain import save_api_key
+        api_key = getpass.getpass("Enter Gemini API key (input hidden): ").strip()
         print("[Aurvyn AI]: Verifying and configuring Gemini API key...")
-        success, message = save_api_key(args.set_key)
+        success, message = save_api_key(api_key)
         if success:
             print(f"[Aurvyn AI]: SUCCESS: {message}")
             sys.exit(0)

@@ -1,11 +1,28 @@
 import os
 import sqlite3
+import re
 from datetime import datetime
 
 # Ensure DB is created in the project directory regardless of execution CWD
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OLD_DB_NAME = os.path.join(BASE_DIR, "mitra_memory.db")
 DB_NAME = os.path.join(BASE_DIR, "aurvyn_memory.db")
+
+def _redact_secrets(value: str) -> str:
+    """Remove common Gemini API-key formats and key-setting commands before persistence."""
+    value = str(value)
+    value = re.sub(r"(?i)AIza[0-9A-Za-z_-]{20,}", "[REDACTED_API_KEY]", value)
+    value = re.sub(
+        r"(?i)(GEMINI_API_KEY\s*=\s*)[^\s,;]+",
+        r"\1[REDACTED]",
+        value
+    )
+    value = re.sub(
+        r"(?i)((?:set|add|update|save|enter)\s+(?:the\s+)?(?:gemini\s+)?(?:api\s+)?key\s*(?:to|as|=|:)?\s*)[^\s,;]+",
+        r"\1[REDACTED]",
+        value
+    )
+    return value
 
 def init_db():
     """Creates the SQLite interactions table if it does not already exist."""
@@ -39,7 +56,7 @@ def log_interaction(user_input: str, response: str):
         cursor = conn.cursor()
         cursor.execute(
             "INSERT INTO interactions (timestamp, user_input, response) VALUES (?, ?, ?)",
-            (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), user_input, response)
+            (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), _redact_secrets(user_input), _redact_secrets(response))
         )
         conn.commit()
         conn.close()
@@ -104,8 +121,9 @@ def insert_interactions_batch(interactions: list) -> int:
             else:
                 continue
 
-            u_clean = str(u).strip()
-            r_clean = str(r).strip()
+            # Imported conversations must receive the same secret filtering as new chat logs.
+            u_clean = _redact_secrets(str(u).strip())
+            r_clean = _redact_secrets(str(r).strip())
             if not u_clean or not r_clean:
                 continue
 
