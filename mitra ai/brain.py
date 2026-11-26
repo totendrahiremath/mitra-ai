@@ -64,7 +64,7 @@ def get_api_status() -> dict:
     api_key = os.getenv("GEMINI_API_KEY", "").strip()
     model_name = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-native-audio-latest")
     if api_key:
-        masked = f"{api_key[:4]}...{api_key[-4:]}" if len(api_key) >= 8 else "****"
+        masked = f"****...{api_key[-4:]}" if len(api_key) >= 4 else "****"
         return {
             "configured": True,
             "masked_key": masked,
