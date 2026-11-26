@@ -649,6 +649,8 @@ class AurvynSiriUI:
                 feedback_lbl.config(text="Please enter an API key.", fg=COLOR_ACCENT_PINK)
                 return
 
+            # Clear the visible input immediately; keep the key only for verification.
+            key_entry.delete(0, tk.END)
             feedback_lbl.config(text="⏳ Verifying key with Gemini API...", fg=COLOR_ACCENT_CYAN)
             save_btn.config(state=tk.DISABLED)
 
@@ -658,7 +660,9 @@ class AurvynSiriUI:
                     save_btn.config(state=tk.NORMAL)
                     if success:
                         feedback_lbl.config(text="✅ " + msg, fg=COLOR_ACCENT_CYAN)
-                        status_lbl.config(text=f"Status: Connected ({entered_key[:6]}...{entered_key[-4:]})", fg=COLOR_ACCENT_CYAN)
+                        from brain import get_api_status
+                        masked_key = get_api_status()["masked_key"]
+                        status_lbl.config(text=f"Status: Connected ({masked_key})", fg=COLOR_ACCENT_CYAN)
                         self.set_aurvyn_response("Gemini API connected successfully! It's a pleasure to assist you. How can I help you today?")
                         self._refresh_api_button()
                         dialog.after(1500, dialog.destroy)
