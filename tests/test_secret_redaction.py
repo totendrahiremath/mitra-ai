@@ -25,10 +25,15 @@ class SecretRedactionTests(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def stored_rows(self):
-        with sqlite3.connect(database.DB_NAME) as connection:
+        # The sqlite3 connection context manager commits/rolls back, but does
+        # not close the connection. Close it explicitly for Windows cleanup.
+        connection = sqlite3.connect(database.DB_NAME)
+        try:
             return connection.execute(
                 "SELECT user_input, response FROM interactions"
             ).fetchall()
+        finally:
+            connection.close()
 
     def test_redacts_google_api_key_pattern(self):
         secret = "AIzaSyA1b2C3d4E5f6G7h8I9j0K1l2M3n4O5p6Q7"
