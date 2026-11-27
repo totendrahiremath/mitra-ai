@@ -144,7 +144,7 @@ def handle_action(command: str) -> str:
             return "ಶುಭ ಸಂಜೆ! ನಿಮ್ಮ ದಿನ ಚೆನ್ನಾಗಿ ಕಳೆಯಿತೇ? ನಾನು ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
         elif "ಶುಭ ಮಧ್ಯಾಹ್ನ" in cmd_clean:
             return "ಶುಭ ಮಧ್ಯಾಹ್ನ! ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
-        return "ನಮಸ್ಕಾರ! ನಾನು ಆರ್ವಿನ್ ಎಐ, ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಸಹಾಯಕ. ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
+        return "ನಮಸ್ಕಾರ! ನಾನು ಮಿತ್ರ ಎಐ, ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಸಹಾಯಕ. ಇಂದು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?"
 
     # 2.2 Kannada Hearing & Microphone Check
     if any(p in cmd_clean for p in ["ಕೇಳಿಸುತ್ತಿದೆಯಾ", "ನನ್ನ ಮಾತು ಕೇಳಿಸುತ್ತಿದೆಯಾ", "ನನ್ನ ಧ್ವನಿ ಕೇಳಿಸುತ್ತಿದೆಯಾ", "ಕೇಳಿಸ್ತಾ ಇದ್ಯಾ"]):
@@ -160,7 +160,7 @@ def handle_action(command: str) -> str:
 
     # 2.5 Kannada Identity
     if any(p in cmd_clean for p in ["ನೀವು ಯಾರು", "ನಿಮ್ಮ ಹೆಸರೇನು", "ನಿನ್ನ ಹೆಸರೇನು", "ನೀನು ಯಾರು"]):
-        return "ನಾನು ಆರ್ವಿನ್ ಎಐ, ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಧ್ವನಿ ಮತ್ತು ಕಂಪ್ಯೂಟರ್ ಆಟೋಮೇಷನ್ ಸಹಾಯಕ. ನಿಮಗೆ ಸಹಾಯ ಮಾಡಲು ನಾನು ಸದಾ ಸಿದ್ಧ!"
+        return "ನಾನು ಮಿತ್ರ ಎಐ, ನಿಮ್ಮ ವೈಯಕ್ತಿಕ ಧ್ವನಿ ಮತ್ತು ಕಂಪ್ಯೂಟರ್ ಆಟೋಮೇಷನ್ ಸಹಾಯಕ. ನಿಮಗೆ ಸಹಾಯ ಮಾಡಲು ನಾನು ಸದಾ ಸಿದ್ಧ!"
 
     # 2.6 Kannada Time & Date
     if any(p in cmd_clean for p in ["ಸಮಯ ಎಷ್ಟು", "ಈಗ ಸಮಯ ಏನು", "ಟೈಮ್ ಎಷ್ಟು", "ಸಮಯ ಹೇಳು"]):
@@ -213,7 +213,7 @@ def handle_action(command: str) -> str:
             return "Good evening! It's so nice to speak with you. How may I be of assistance tonight?"
         elif "namaste" in cmd_clean:
             return "Namaste! It is a true honor to assist you. How can I help you today?"
-        return "Hello! It is a pleasure to speak with you. I am Aurvyn AI, your personal voice assistant. How may I help you today?"
+        return "Hello! It is a pleasure to speak with you. I am Mitra AI, your personal voice assistant. How may I help you today?"
 
     # 5. Politeness / Gratitude
     if re.search(r"\b(thank you|thanks|great job|well done)\b", cmd_clean):
@@ -239,7 +239,7 @@ def handle_action(command: str) -> str:
         new_key = set_key_match.group(1).strip()
         success, message = save_api_key(new_key)
         if success:
-            return "Gemini API key has been verified and saved successfully! Aurvyn AI is now happily connected to Gemini. How may I assist you?"
+            return "Gemini API key has been verified and saved successfully! Mitra AI is now happily connected to Gemini. How may I assist you?"
         else:
             return f"Failed to set Gemini API key: {message}"
 
@@ -273,7 +273,7 @@ def handle_action(command: str) -> str:
 
     # 7. Identity & Well-being
     if any(p in cmd_clean for p in ["who are you", "what is your name", "what's your name"]):
-        return "I am Aurvyn AI, your personal voice assistant and companion. It's a genuine pleasure to assist you! What can I help you with today?"
+        return "I am Mitra AI, your personal voice assistant and companion. It's a genuine pleasure to assist you! What can I help you with today?"
 
     if any(p in cmd_clean for p in ["how are you", "how're you", "how are you doing"]):
         return "I'm doing wonderfully, thank you so much for asking! I hope you are having a fantastic day as well. How may I assist you?"
@@ -406,7 +406,7 @@ def handle_action(command: str) -> str:
     # 16. Import Gemini Conversations
     if any(p in cmd_clean for p in ["import conversations", "import gemini", "import chats", "upload conversations", "import history"]):
         return (
-            "To import your previous Gemini conversations, you can click the 'IMPORT' button at the top of the Aurvyn AI window, "
+            "To import your previous Gemini conversations, you can click the 'IMPORT' button at the top of the Mitra AI window, "
             "or run 'python main.py --import <path>' in your terminal. I support Google Takeout ZIP archives, JSON files, CSV spreadsheets, and text transcripts!"
         )
 

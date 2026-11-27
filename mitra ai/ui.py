@@ -113,16 +113,16 @@ class SiriOrbCanvas(tk.Canvas):
         self.running = False
 
 
-class AurvynSiriUI:
+class MitraSiriUI:
     """
-    Siri-style Desktop Interface for Aurvyn AI.
+    Siri-style Desktop Interface for Mitra AI.
     Features dark glassmorphism, animated Siri glowing visualizer, subtitle transcript,
     one-click computer automation shortcuts, and voice/text interaction.
     """
     def __init__(self, command_handler_fn=None):
         self.command_handler = command_handler_fn
         self.root = tk.Tk()
-        self.root.title("Aurvyn AI — Computer Automation Assistant")
+        self.root.title("Mitra AI — Computer Automation Assistant")
         self.root.geometry("520x740")
         self.root.minsize(460, 650)
         self.root.configure(bg=COLOR_BG)
@@ -146,7 +146,7 @@ class AurvynSiriUI:
         header = tk.Frame(self.root, bg=COLOR_BG)
         header.pack(fill=tk.X, padx=20, pady=(15, 5))
 
-        title_lbl = tk.Label(header, text="AURVYN AI", font=("Segoe UI", 16, "bold"), fg=COLOR_TEXT_MAIN, bg=COLOR_BG)
+        title_lbl = tk.Label(header, text="MITRA AI", font=("Segoe UI", 16, "bold"), fg=COLOR_TEXT_MAIN, bg=COLOR_BG)
         title_lbl.pack(side=tk.LEFT)
 
         self.status_badge = tk.Label(
@@ -275,10 +275,10 @@ class AurvynSiriUI:
         sep = tk.Frame(self.dialogue_card, bg=COLOR_CARD_BORDER, height=1)
         sep.pack(fill=tk.X, padx=15, pady=3)
 
-        # Aurvyn Response Bubble
-        self.aurvyn_label = tk.Label(
+        # Mitra Response Bubble
+        self.mitra_label = tk.Label(
             self.dialogue_card,
-            text="Hello! Aurvyn AI is ready to assist you. Speak freely or click any shortcut below to begin.",
+            text="Hello! Mitra AI is ready to assist you. Speak freely or click any shortcut below to begin.",
             font=("Segoe UI", 10),
             fg=COLOR_TEXT_MAIN,
             bg=COLOR_CARD,
@@ -286,8 +286,8 @@ class AurvynSiriUI:
             justify=tk.LEFT,
             anchor="w"
         )
-        self.aurvyn_label.pack(fill=tk.BOTH, expand=True, padx=15, pady=(5, 10))
-        self.mitra_label = self.aurvyn_label  # Backward compatibility alias
+        self.mitra_label.pack(fill=tk.BOTH, expand=True, padx=15, pady=(5, 10))
+        self.mitra_label = self.mitra_label  # Backward compatibility alias
 
         # Vision / Screen Context Card (dynamically displayed when multimodal OCR/analysis arrives)
         self.vision_frame = tk.Frame(self.dialogue_card, bg="#0D1117", highlightthickness=1, highlightbackground=COLOR_CARD_BORDER)
@@ -461,15 +461,12 @@ class AurvynSiriUI:
         """Thread-safe update of user speech bubble."""
         self.root.after(0, lambda: self.user_label.config(text=f'You: "{text}"', fg=COLOR_TEXT_MAIN))
 
-    def set_aurvyn_response(self, text: str):
-        """Thread-safe update of Aurvyn's vocal response bubble."""
+    def set_mitra_response(self, text: str):
+        """Thread-safe update of Mitra's vocal response bubble."""
         def _update():
-            self.aurvyn_label.config(text=f"Aurvyn: {text}", fg=COLOR_TEXT_MAIN)
+            self.mitra_label.config(text=f"Mitra: {text}", fg=COLOR_TEXT_MAIN)
         self.root.after(0, _update)
 
-    def set_mitra_response(self, text: str):
-        """Legacy alias for set_aurvyn_response."""
-        self.set_aurvyn_response(text)
 
     def set_visual_analysis(self, title: str, spoken_summary: str, details_text: str):
         """
@@ -477,7 +474,7 @@ class AurvynSiriUI:
         Shows the spoken summary in the main label and extracted code / debugging advice in the vision card.
         """
         def _update():
-            self.aurvyn_label.config(text=f"Aurvyn: {spoken_summary}", fg=COLOR_TEXT_MAIN)
+            self.mitra_label.config(text=f"Mitra: {spoken_summary}", fg=COLOR_TEXT_MAIN)
             self._last_vision_details = details_text
             self.v_title_lbl.config(text=f"🔍 {title.upper()[:35]}")
             self.v_text.config(state=tk.NORMAL)
@@ -536,7 +533,7 @@ class AurvynSiriUI:
         from brain import get_api_status, save_api_key
 
         dialog = tk.Toplevel(self.root)
-        dialog.title("Aurvyn AI — Gemini API Settings")
+        dialog.title("Mitra AI — Gemini API Settings")
         dialog.geometry("450x390")
         dialog.resizable(False, False)
         dialog.configure(bg=COLOR_BG)
@@ -659,7 +656,7 @@ class AurvynSiriUI:
                     if success:
                         feedback_lbl.config(text="✅ " + msg, fg=COLOR_ACCENT_CYAN)
                         status_lbl.config(text=f"Status: Connected ({entered_key[:6]}...{entered_key[-4:]})", fg=COLOR_ACCENT_CYAN)
-                        self.set_aurvyn_response("Gemini API connected successfully! It's a pleasure to assist you. How can I help you today?")
+                        self.set_mitra_response("Gemini API connected successfully! It's a pleasure to assist you. How can I help you today?")
                         self._refresh_api_button()
                         dialog.after(1500, dialog.destroy)
                     else:
@@ -709,7 +706,7 @@ class AurvynSiriUI:
         from importer import import_gemini_path
 
         dialog = tk.Toplevel(self.root)
-        dialog.title("Import Gemini Conversations — Aurvyn AI")
+        dialog.title("Import Gemini Conversations — Mitra AI")
         dialog.geometry("490x530")
         dialog.resizable(False, False)
         dialog.configure(bg=COLOR_BG)
@@ -737,7 +734,7 @@ class AurvynSiriUI:
 
         tk.Label(
             card,
-            text="Collect your previous Gemini / Bard chats from Google Takeout or custom export files and upload them into Aurvyn AI's memory.",
+            text="Collect your previous Gemini / Bard chats from Google Takeout or custom export files and upload them into Mitra AI's memory.",
             font=("Segoe UI", 9),
             fg=COLOR_TEXT_MUTED,
             bg=COLOR_CARD,
@@ -895,7 +892,7 @@ class AurvynSiriUI:
                         feedback_lbl.config(text="✅ " + res["message"], fg=COLOR_ACCENT_CYAN)
                         new_count = get_total_interactions_count()
                         count_lbl.config(text=f"🧠 Current Stored Interactions: {new_count}")
-                        self.set_aurvyn_response(f"I've imported {res['imported']} previous conversation exchanges into my memory!")
+                        self.set_mitra_response(f"I've imported {res['imported']} previous conversation exchanges into my memory!")
                     else:
                         feedback_lbl.config(text="❌ " + res["message"], fg=COLOR_ACCENT_PINK)
                 dialog.after(0, done)
@@ -936,11 +933,11 @@ class AurvynSiriUI:
         close_btn.pack(side=tk.RIGHT)
 
     def _open_history_dialog(self):
-        """Opens a modal to view recent conversations stored in Aurvyn AI memory."""
+        """Opens a modal to view recent conversations stored in Mitra AI memory."""
         from database import get_recent_interactions, get_total_interactions_count
 
         dialog = tk.Toplevel(self.root)
-        dialog.title("Aurvyn AI — Conversation Memory")
+        dialog.title("Mitra AI — Conversation Memory")
         dialog.geometry("520x560")
         dialog.minsize(450, 400)
         dialog.configure(bg=COLOR_BG)
@@ -1004,7 +1001,7 @@ class AurvynSiriUI:
         # Configure tags
         txt.tag_configure("time", foreground=COLOR_TEXT_MUTED, font=("Segoe UI", 8, "italic"))
         txt.tag_configure("user", foreground=COLOR_ACCENT_CYAN, font=("Segoe UI", 9, "bold"))
-        txt.tag_configure("aurvyn", foreground=COLOR_TEXT_MAIN, font=("Segoe UI", 9))
+        txt.tag_configure("mitra", foreground=COLOR_TEXT_MAIN, font=("Segoe UI", 9))
         txt.tag_configure("divider", foreground=COLOR_CARD_BORDER)
 
         def populate_history():
@@ -1017,7 +1014,7 @@ class AurvynSiriUI:
                 for ts, u, r in records:
                     txt.insert(tk.END, f"[{ts}]\n", "time")
                     txt.insert(tk.END, f"You: {u}\n", "user")
-                    txt.insert(tk.END, f"Aurvyn: {r}\n", "aurvyn")
+                    txt.insert(tk.END, f"Mitra: {r}\n", "mitra")
                     txt.insert(tk.END, "-" * 55 + "\n\n", "divider")
             txt.config(state=tk.DISABLED)
 
@@ -1068,15 +1065,15 @@ class AurvynSiriUI:
         if curr == "auto":
             set_language_mode("kn")
             self.lang_btn.config(text="🌐 ಕನ್ನಡ", fg=COLOR_ACCENT_PINK)
-            self.set_aurvyn_response("ಕನ್ನಡ ಮೋಡ್ ಸಕ್ರಿಯಗೊಂಡಿದೆ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?")
+            self.set_mitra_response("ಕನ್ನಡ ಮೋಡ್ ಸಕ್ರಿಯಗೊಂಡಿದೆ. ನಾನು ನಿಮಗೆ ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?")
         elif curr == "kn":
             set_language_mode("en")
             self.lang_btn.config(text="🌐 EN", fg=COLOR_ACCENT_BLUE)
-            self.set_aurvyn_response("English language mode activated. How may I assist you?")
+            self.set_mitra_response("English language mode activated. How may I assist you?")
         else:
             set_language_mode("auto")
             self.lang_btn.config(text="🌐 AUTO", fg=COLOR_ACCENT_CYAN)
-            self.set_aurvyn_response("Bilingual auto mode activated (English + ಕನ್ನಡ).")
+            self.set_mitra_response("Bilingual auto mode activated (English + ಕನ್ನಡ).")
 
     def run(self):
 
@@ -1089,5 +1086,3 @@ class AurvynSiriUI:
         except Exception:
             pass
 
-# Backward compatibility alias
-MitraSiriUI = AurvynSiriUI

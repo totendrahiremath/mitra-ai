@@ -70,8 +70,8 @@ _is_speaking = False
 _stop_speech_flag = False
 
 WAKE_WORDS = [
-    # Aurvyn
-    "hey aurvyn", "aurvyn", "ok aurvyn", "hello aurvyn", "hi aurvyn",
+    # Mitra
+    "hey mitra", "mitra", "ok mitra", "hello mitra", "hi mitra",
     "hey arvin", "arvin", "ok arvin", "hello arvin", "hi arvin",
     "hey orvin", "orvin", "ok orvin",
     # Mitra
@@ -79,7 +79,7 @@ WAKE_WORDS = [
     "hey mithra", "mithra", "ok mithra", "hello mithra", "hi mithra",
     "hey meetra", "meetra", "ok meetra",
     # Kannada
-    "ಹೇ ಮಿತ್ರ", "ಮಿತ್ರ", "ಹೇ ಆರ್ವಿನ್", "ಆರ್ವಿನ್"
+    "ಹೇ ಮಿತ್ರ", "ಮಿತ್ರ", "ಹೇ ಮಿತ್ರ", "ಮಿತ್ರ"
 ]
 
 # Shared speech recognition instances
@@ -162,9 +162,9 @@ def calibrate_mic():
     if mic:
         try:
             with mic as source:
-                print("[Aurvyn]: Calibrating microphone for ambient room noise...")
+                print("[Mitra]: Calibrating microphone for ambient room noise...")
                 _recognizer.adjust_for_ambient_noise(source, duration=1.0)
-                print(f"[Aurvyn]: Microphone calibrated (Energy threshold: {int(_recognizer.energy_threshold)})")
+                print(f"[Mitra]: Microphone calibrated (Energy threshold: {int(_recognizer.energy_threshold)})")
         except Exception as e:
             print(f"[Mic Warning]: Ambient noise calibration skipped: {e}")
 
@@ -175,7 +175,7 @@ def _speak_kannada_gtts(text: str) -> bool:
         from gtts import gTTS
         import win32com.client
 
-        temp_path = os.path.join(tempfile.gettempdir(), f"aurvyn_tts_{os.getpid()}.mp3")
+        temp_path = os.path.join(tempfile.gettempdir(), f"mitra_tts_{os.getpid()}.mp3")
         tts = gTTS(text=text, lang="kn")
         tts.save(temp_path)
 
@@ -216,7 +216,7 @@ def speak(text: str):
     if not text:
         return
 
-    print(f"\n[Aurvyn]: {text}")
+    print(f"\n[Mitra]: {text}")
     _is_speaking = True
     _stop_speech_flag = False
     _notify_ui("SPEAKING")
@@ -281,7 +281,7 @@ def clean_command(text: str) -> str:
     text_clean = text.strip()
     for w in WAKE_WORDS:
         text_clean = re.sub(rf"^\s*{re.escape(w)}[\s,.:;]*", "", text_clean, flags=re.IGNORECASE)
-    text_clean = re.sub(r"^(?:please|can you|could you|would you|mitra|aurvyn|arvin|ದಯವಿಟ್ಟು)\s+", "", text_clean, flags=re.IGNORECASE)
+    text_clean = re.sub(r"^(?:please|can you|could you|would you|mitra|mitra|arvin|ದಯವಿಟ್ಟು)\s+", "", text_clean, flags=re.IGNORECASE)
     return text_clean.strip(" ,.?!:;\"\t\n\r")
 
 def _get_recognition_languages() -> list[str]:
@@ -298,7 +298,7 @@ def listen_voice_input() -> tuple[str, str]:
     Listens for speech input from the microphone with generous pause tolerance
     so user commands are heard in full without mid-sentence cutoff.
     Returns:
-        ("WAKE_WORD", "") if the user only said the trigger wake word ("Hey Mitra" / "Hey Aurvyn").
+        ("WAKE_WORD", "") if the user only said the trigger wake word ("Hey Mitra" / "Hey Mitra").
         ("COMMAND", query) if a command was spoken (standalone or after wake word).
         (None, "") if no speech was detected or audio timed out.
     """
@@ -369,12 +369,12 @@ def listen_command() -> str:
         return ""
 
     with mic as source:
-        print("\n[Aurvyn]: Listening for your command...")
+        print("\n[Mitra]: Listening for your command...")
         _notify_ui("LISTENING")
         try:
             # pause_threshold 2.0s and phrase_time_limit 15s to capture full query
             audio = _recognizer.listen(source, timeout=6, phrase_time_limit=15)
-            print("[Aurvyn]: Processing audio...")
+            print("[Mitra]: Processing audio...")
             _notify_ui("PROCESSING")
 
             query = ""

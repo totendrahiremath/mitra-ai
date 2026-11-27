@@ -39,7 +39,7 @@ LIVE_MODELS = list(dict.fromkeys([
 ]))
 
 LIVE_SYSTEM_INSTRUCTION = """
-You are Aurvyn AI, an exceptionally warm, respectful, friendly, and helpful personal voice and AI companion.
+You are Mitra AI, an exceptionally warm, respectful, friendly, and helpful personal voice and AI companion.
 You are conversing through a real-time, low-latency live audio session.
 
 GUIDELINES:
@@ -311,7 +311,7 @@ class LiveAudioSession:
                     continue
 
                 # Speech Interruption (Barge-in) Detection:
-                # If Aurvyn is currently speaking through the speakers and the user starts talking,
+                # If Mitra is currently speaking through the speakers and the user starts talking,
                 # detect the energy surge and cut off TTS playback immediately.
                 if self._is_speaking:
                     rms = self._calculate_rms(data)

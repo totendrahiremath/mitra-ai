@@ -4,8 +4,8 @@ from datetime import datetime
 
 # Ensure DB is created in the project directory regardless of execution CWD
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-OLD_DB_NAME = os.path.join(BASE_DIR, "mitra_memory.db")
-DB_NAME = os.path.join(BASE_DIR, "aurvyn_memory.db")
+OLD_DB_NAME = os.path.join(BASE_DIR, "aurvyn_memory.db")  # Legacy database; migrate without losing history.
+DB_NAME = os.path.join(BASE_DIR, "mitra_memory.db")
 
 def init_db():
     """Creates the SQLite interactions table if it does not already exist."""

@@ -16,14 +16,14 @@ from engine import (
 )
 
 from actions import handle_action, set_ui_visual_callback
-from brain import ask_aurvyn, ask_mitra
-from ui import AurvynSiriUI, MitraSiriUI
+from brain import ask_mitra
+from ui import MitraSiriUI
 from live_stream import LiveAudioSession
 
 _global_app = None
 
 def play_activation_beep():
-    """Emits an audio beep indicating Aurvyn detected the wake word."""
+    """Emits an audio beep indicating Mitra detected the wake word."""
     try:
         winsound.Beep(1200, 150)
     except Exception:
@@ -32,7 +32,7 @@ def play_activation_beep():
 def process_query(query: str, app=None) -> bool:
     """
     Processes a command query from the user (voice, text, or automation).
-    Returns False if Aurvyn should exit, True to continue.
+    Returns False if Mitra should exit, True to continue.
     """
     query = query.strip()
     if not query:
@@ -49,9 +49,9 @@ def process_query(query: str, app=None) -> bool:
     # 1. Shutdown / Exit triggers
     exit_words = ["shutdown", "terminate", "exit program", "exit", "quit", "goodbye", "bye", "ನಿರ್ಗಮಿಸು", "ಮುಕ್ತಾಯ", "ಬಂದ್ ಮಾಡು", "ವಿದಾಯ", "ಹೋಗಿ ಬರ್ತೀನಿ"]
     if any(query_lower == w or query_lower.startswith(w + " ") or f" {w} " in f" {query_lower} " or w in query for w in exit_words):
-        farewell = "ಆರ್ವಿನ್ ಎಐ ಸ್ಥಗಿತಗೊಳ್ಳುತ್ತಿದೆ. ವಿದಾಯ! ನಿಮ್ಮೊಂದಿಗೆ ಮಾತನಾಡಲು ನನಗೆ ಸಂತೋಷವಾಯಿತು!" if any('\u0c80' <= c <= '\u0cff' for c in query) else "Shutting down Aurvyn AI. Goodbye! It was a true pleasure assisting you, and I hope to speak with you again soon!"
+        farewell = "ಮಿತ್ರ ಎಐ ಸ್ಥಗಿತಗೊಳ್ಳುತ್ತಿದೆ. ವಿದಾಯ! ನಿಮ್ಮೊಂದಿಗೆ ಮಾತನಾಡಲು ನನಗೆ ಸಂತೋಷವಾಯಿತು!" if any('\u0c80' <= c <= '\u0cff' for c in query) else "Shutting down Mitra AI. Goodbye! It was a true pleasure assisting you, and I hope to speak with you again soon!"
         if active_app:
-            active_app.set_aurvyn_response(farewell)
+            active_app.set_mitra_response(farewell)
         speak(farewell)
         log_interaction(query, "System completely terminated.")
         return False
@@ -59,9 +59,9 @@ def process_query(query: str, app=None) -> bool:
     # 2. Standby / Sleep triggers
     sleep_words = ["sleep", "go to sleep", "rest", "standby", "ಮಲಗು", "ವಿಶ್ರಾಂತಿ", "ಸ್ಟ್ಯಾಂಡ್‌ಬೈ"]
     if any(w in query_lower or w in query for w in sleep_words):
-        standby_msg = "ಸ್ಟ್ಯಾಂಡ್‌ಬೈ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ. ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದಾಗ 'ಹೇ ಆರ್ವಿನ್' ಎಂದು ಹೇಳಿ." if any('\u0c80' <= c <= '\u0cff' for c in query) else "Going back to standby. Whenever you need me, just say 'Hey Aurvyn' and I'll be right here for you."
+        standby_msg = "ಸ್ಟ್ಯಾಂಡ್‌ಬೈ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ. ನಿಮಗೆ ಸಹಾಯ ಬೇಕಾದಾಗ 'ಹೇ ಮಿತ್ರ' ಎಂದು ಹೇಳಿ." if any('\u0c80' <= c <= '\u0cff' for c in query) else "Going back to standby. Whenever you need me, just say 'Hey Mitra' and I'll be right here for you."
         if active_app:
-            active_app.set_aurvyn_response(standby_msg)
+            active_app.set_mitra_response(standby_msg)
         speak(standby_msg)
         log_interaction(query, "Returned to standby mode.")
         return True
@@ -72,24 +72,24 @@ def process_query(query: str, app=None) -> bool:
 
     # 4. Fallback to Gemini LLM for reasoning (with browser fallback if unconfigured)
     if not response:
-        print("[Aurvyn]: Querying Intelligence Engine...")
-        response = ask_aurvyn(query)
+        print("[Mitra]: Querying Intelligence Engine...")
+        response = ask_mitra(query)
 
     # 5. Output through voice, update GUI subtitle, and log to database
     if active_app:
-        active_app.set_aurvyn_response(response)
+        active_app.set_mitra_response(response)
     speak(response)
     log_interaction(query, response)
     return True
 
 def run_gui_mode():
-    """Runs Aurvyn AI with the Siri-like animated interface, live streaming toggle, and voice listener."""
+    """Runs Mitra AI with the Siri-like animated interface, live streaming toggle, and voice listener."""
     global _global_app
     print("\n" + "=" * 55)
-    print("      Launching Aurvyn AI — Siri-style Visual Interface    ")
+    print("      Launching Mitra AI — Siri-style Visual Interface    ")
     print("=" * 55)
 
-    _global_app = AurvynSiriUI(command_handler_fn=lambda q: process_query(q, app=_global_app))
+    _global_app = MitraSiriUI(command_handler_fn=lambda q: process_query(q, app=_global_app))
     set_ui_callback(_global_app.set_state)
     set_ui_visual_callback(_global_app.set_visual_analysis)
 
@@ -97,7 +97,7 @@ def run_gui_mode():
     live_session = LiveAudioSession(
         ui_state_callback=_global_app.set_state,
         ui_user_speech_callback=_global_app.set_user_speech,
-        ui_response_callback=_global_app.set_aurvyn_response
+        ui_response_callback=_global_app.set_mitra_response
     )
     _global_app._live_session_ref = live_session
     live_active_event = threading.Event()
@@ -119,7 +119,7 @@ def run_gui_mode():
 
     def voice_loop():
         calibrate_mic()
-        speak("Aurvyn AI is ready. It's wonderful to see you! How may I assist you today?")
+        speak("Mitra AI is ready. It's wonderful to see you! How may I assist you today?")
         while True:
             try:
                 # If Live Audio Streaming mode is running, yield microphone to it
@@ -160,7 +160,7 @@ def run_gui_mode():
 def run_text_mode():
     """Interactive text/CLI mode for typing commands directly."""
     print("\n" + "=" * 50)
-    print("      Aurvyn AI: Interactive Text / CLI Mode       ")
+    print("      Mitra AI: Interactive Text / CLI Mode       ")
     print("=" * 50)
     print("Type your commands below. Type 'exit' to quit.\n")
     from brain import get_api_status
@@ -169,7 +169,7 @@ def run_text_mode():
         print(f"[Gemini API]: Connected ({api_st['masked_key']}) | Model: {api_st['model']}\n")
     else:
         print("[Gemini API]: Not configured yet. (Type 'add gemini api' or run 'python main.py --set-key <KEY>')\n")
-    speak("Aurvyn AI is initialized and ready in interactive mode. It's a pleasure to assist you! How can I help you today?")
+    speak("Mitra AI is initialized and ready in interactive mode. It's a pleasure to assist you! How can I help you today?")
 
     while True:
         try:
@@ -181,19 +181,19 @@ def run_text_mode():
                 break
         except (KeyboardInterrupt, EOFError):
             print("\n")
-            speak("Shutting down Aurvyn AI. Thank you for your time, and have a wonderful day ahead!")
+            speak("Shutting down Mitra AI. Thank you for your time, and have a wonderful day ahead!")
             break
 
 def run_cli_voice_mode():
     """Terminal-only continuous voice-activated command loop."""
     print("\n" + "=" * 50)
-    print("           Aurvyn AI: Voice Mode Activated         ")
+    print("           Mitra AI: Voice Mode Activated         ")
     print("=" * 50)
     print("Speak your command directly (e.g. 'open youtube', 'battery status')")
-    print("or say 'Hey Aurvyn'. Say 'shutdown' or press Ctrl+C to exit.\n")
+    print("or say 'Hey Mitra'. Say 'shutdown' or press Ctrl+C to exit.\n")
 
     calibrate_mic()
-    speak("Aurvyn AI is ready and listening. It's wonderful to assist you! Please go ahead with your command.")
+    speak("Mitra AI is ready and listening. It's wonderful to assist you! Please go ahead with your command.")
 
     try:
         while True:
@@ -218,34 +218,34 @@ def run_cli_voice_mode():
 
     except KeyboardInterrupt:
         print("\n")
-        speak("Shutting down Aurvyn AI. Thank you for your time, and have a wonderful day!")
+        speak("Shutting down Mitra AI. Thank you for your time, and have a wonderful day!")
 
 def run_live_cli_mode():
     """Continuous terminal-based bidirectional live audio streaming session."""
     print("\n" + "=" * 55)
-    print("       Aurvyn AI: Live Audio Streaming Mode (CLI)    ")
+    print("       Mitra AI: Live Audio Streaming Mode (CLI)    ")
     print("=" * 55)
     print("Real-time bidirectional conversational streaming active.")
-    print("Speak freely into your microphone. Say anything or interrupt Aurvyn anytime.")
+    print("Speak freely into your microphone. Say anything or interrupt Mitra anytime.")
     print("Press Ctrl+C to exit.\n")
 
     session = LiveAudioSession(
         ui_state_callback=lambda s: print(f"[{s}]", end=" ", flush=True),
         ui_user_speech_callback=lambda u: print(f"\nYou: {u}"),
-        ui_response_callback=lambda r: print(f"Aurvyn: {r}")
+        ui_response_callback=lambda r: print(f"Mitra: {r}")
     )
     session.start()
     try:
         while session.is_running():
             time.sleep(0.5)
     except KeyboardInterrupt:
-        print("\n[Aurvyn AI]: Shutting down Live Audio Session...")
+        print("\n[Mitra AI]: Shutting down Live Audio Session...")
         session.stop()
 
 def run_diagnostics():
-    """Runs automated health checks across all Aurvyn AI components."""
+    """Runs automated health checks across all Mitra AI components."""
     print("\n" + "=" * 55)
-    print("            Aurvyn AI Diagnostics & Health Check    ")
+    print("            Mitra AI Diagnostics & Health Check    ")
     print("=" * 55)
 
     # 1. Database check
@@ -306,7 +306,7 @@ def run_diagnostics():
     # 5. Engine check
     print("\n[5/5] Checking Speech Engine & Audio Output...")
     try:
-        speak("Aurvyn AI diagnostic check completed successfully.")
+        speak("Mitra AI diagnostic check completed successfully.")
         print("  -> Speech synthesizer tested successfully.")
     except Exception as e:
         print(f"  -> [FAIL] Engine check failed: {e}")
@@ -316,7 +316,7 @@ def run_diagnostics():
     print("=" * 55 + "\n")
 
 def main():
-    parser = argparse.ArgumentParser(description="Aurvyn AI - Personal Voice Assistant")
+    parser = argparse.ArgumentParser(description="Mitra AI - Personal Voice Assistant")
     parser.add_argument("--cli", action="store_true", help="Run in command-line voice mode (no GUI)")
     parser.add_argument("--live", action="store_true", help="Run in continuous real-time bidirectional live voice streaming mode (CLI)")
     parser.add_argument("--text", "-t", action="store_true", help="Run in interactive text mode instead of voice")
@@ -328,25 +328,25 @@ def main():
     # Handle immediate key setup if specified
     if args.set_key:
         from brain import save_api_key
-        print("[Aurvyn AI]: Verifying and configuring Gemini API key...")
+        print("[Mitra AI]: Verifying and configuring Gemini API key...")
         success, message = save_api_key(args.set_key)
         if success:
-            print(f"[Aurvyn AI]: SUCCESS: {message}")
+            print(f"[Mitra AI]: SUCCESS: {message}")
             sys.exit(0)
         else:
-            print(f"[Aurvyn AI]: ERROR: {message}")
+            print(f"[Mitra AI]: ERROR: {message}")
             sys.exit(1)
 
     # Handle conversation import if specified
     if args.import_path:
         from importer import import_gemini_path
-        print(f"[Aurvyn AI]: Importing Gemini conversations from '{args.import_path}'...")
+        print(f"[Mitra AI]: Importing Gemini conversations from '{args.import_path}'...")
         res = import_gemini_path(args.import_path)
         if res["success"]:
-            print(f"[Aurvyn AI]: SUCCESS: {res['message']}")
+            print(f"[Mitra AI]: SUCCESS: {res['message']}")
             sys.exit(0)
         else:
-            print(f"[Aurvyn AI]: ERROR: {res['message']}")
+            print(f"[Mitra AI]: ERROR: {res['message']}")
             sys.exit(1)
 
     # Initialize SQLite Database

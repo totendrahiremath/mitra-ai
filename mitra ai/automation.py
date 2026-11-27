@@ -254,7 +254,7 @@ def handle_automation(command: str) -> str:
     # -------------------------------------------------------------
     if any(p in cmd for p in ["take screenshot", "take a screenshot", "screenshot", "capture screen"]):
         pictures_dir = os.path.join(os.path.expanduser("~"), "Pictures")
-        screenshots_dir = os.path.join(pictures_dir, "AurvynScreenshots")
+        screenshots_dir = os.path.join(pictures_dir, "MitraScreenshots")
         os.makedirs(screenshots_dir, exist_ok=True)
         filename = f"screenshot_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
         filepath = os.path.join(screenshots_dir, filename)
@@ -447,8 +447,8 @@ def handle_automation(command: str) -> str:
     close_match = re.search(r"^(?:close|kill|terminate|exit)\s+(?:the\s+)?([a-zA-Z0-9_\s]+)", cmd)
     if close_match:
         app_target = close_match.group(1).strip()
-        # Avoid closing Aurvyn itself via this rule
-        if app_target not in ["aurvyn", "mitra", "program", "system", "everything"]:
+        # Avoid closing Mitra itself via this rule
+        if app_target not in ["mitra", "program", "system", "everything"]:
             if app_target in APP_PROCESS_MAP or f"{app_target}.exe" in cmd:
                 return kill_app_process(app_target)
 

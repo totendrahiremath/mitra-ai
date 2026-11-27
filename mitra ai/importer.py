@@ -153,7 +153,7 @@ def parse_text_transcript(text: str) -> list[tuple[str, str, str]]:
 
     # Pattern for User / Gemini pairs
     pattern = re.compile(
-        r"(?:^|\n)\s*(?:###\s*)?(?:User|Human|Prompt|You):\s*(.*?)\n\s*(?:###\s*)?(?:Gemini|Aurvyn|Assistant|Model|Bard):\s*(.*?)(?=\n\s*(?:###\s*)?(?:User|Human|Prompt|You):|\Z)",
+        r"(?:^|\n)\s*(?:###\s*)?(?:User|Human|Prompt|You):\s*(.*?)\n\s*(?:###\s*)?(?:Gemini|Mitra|Aurvyn|Assistant|Model|Bard):\s*(.*?)(?=\n\s*(?:###\s*)?(?:User|Human|Prompt|You):|\Z)",
         re.DOTALL | re.IGNORECASE
     )
 
@@ -231,7 +231,7 @@ def import_gemini_file(file_path: str) -> dict:
     - HTML (Google Takeout activity log)
     - TXT / MD (Plain text or markdown transcripts)
 
-    Inserts parsed conversations into aurvyn_memory.db and skips duplicates.
+    Inserts parsed conversations into mitra_memory.db and skips duplicates.
     Returns:
         dict: {"success": bool, "imported": int, "total_parsed": int, "message": str}
     """
@@ -321,7 +321,7 @@ def import_gemini_file(file_path: str) -> dict:
     imported_count = insert_interactions_batch(parsed_turns)
     duplicates_skipped = total_parsed - imported_count
 
-    msg = f"Successfully imported {imported_count} new interaction(s) into Aurvyn AI memory."
+    msg = f"Successfully imported {imported_count} new interaction(s) into Mitra AI memory."
     if duplicates_skipped > 0:
         msg += f" ({duplicates_skipped} duplicate entries were skipped)."
 
@@ -376,6 +376,6 @@ def import_gemini_path(path: str) -> dict:
         "imported": total_imp,
         "total_parsed": total_prs,
         "duplicates_skipped": total_dup,
-        "message": f"Processed {files_processed} export file(s): successfully imported {total_imp} new interaction(s) into Aurvyn AI memory ({total_dup} duplicates skipped)."
+        "message": f"Processed {files_processed} export file(s): successfully imported {total_imp} new interaction(s) into Mitra AI memory ({total_dup} duplicates skipped)."
     }
 

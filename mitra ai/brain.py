@@ -8,7 +8,7 @@ from google.genai import types
 _client = None
 
 SYSTEM_INSTRUCTION = """
-You are Aurvyn AI (also known as Mitra AI), a fast, friendly, helpful, and concise personal AI assistant.
+You are Mitra AI, a fast, friendly, helpful, and concise personal AI assistant.
 Provide conversational, direct answers suitable for text-to-speech.
 Keep standard answers within 2 to 4 sentences. Avoid Markdown bullet points, asterisks,
 or symbols that sound awkward when vocalized by a speech synthesizer.
@@ -197,9 +197,6 @@ def ask_mitra(prompt: str) -> str:
         webbrowser.open(f"https://www.google.com/search?q={encoded}")
         return f"I had trouble contacting the Gemini API, so I opened a Google search for '{prompt}' instead."
 
-def ask_aurvyn(prompt: str) -> str:
-    """Primary query function for Aurvyn AI (alias for ask_mitra)."""
-    return ask_mitra(prompt)
 
 def analyze_screen(prompt: str = "") -> dict:
     """Captures desktop screen and analyzes it with Gemini Multimodal Vision."""
@@ -279,7 +276,6 @@ EXTRACTED_TEXT: Any key code snippet or error text shown on the screen.
 
 __all__ = [
     "ask_mitra",
-    "ask_aurvyn",
     "clean_for_speech",
     "get_api_status",
     "save_api_key",

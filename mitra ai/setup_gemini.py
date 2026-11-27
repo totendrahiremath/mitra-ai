@@ -4,7 +4,7 @@ from brain import get_api_status, save_api_key
 
 def main():
     print("=" * 60)
-    print("       Aurvyn AI — Gemini API Key Setup & Configuration      ")
+    print("       Mitra AI — Gemini API Key Setup & Configuration      ")
     print("=" * 60)
 
     status = get_api_status()
@@ -14,7 +14,7 @@ def main():
         print(f"  • Model:      {status['model']}\n")
     else:
         print("\n[Status]: Gemini API is NOT configured yet.")
-        print("Aurvyn AI falls back to browser search when answering general questions.")
+        print("Mitra AI falls back to browser search when answering general questions.")
         print("Configuring a key enables direct, vocal AI answers.\n")
 
     print("Options:")
@@ -39,7 +39,7 @@ def main():
         success, message = save_api_key(key)
         if success:
             print(f"\n✅ SUCCESS: {message}")
-            print("Your key has been saved to .env and is ready for Aurvyn AI!\n")
+            print("Your key has been saved to .env and is ready for Mitra AI!\n")
         else:
             print(f"\n❌ ERROR: {message}\n")
     else:
